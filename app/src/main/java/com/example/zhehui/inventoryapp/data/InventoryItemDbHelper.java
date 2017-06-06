@@ -12,6 +12,9 @@ import com.example.zhehui.inventoryapp.data.InventoryItemContract.InventoryItemE
  */
 public class InventoryItemDbHelper extends SQLiteOpenHelper {
 
+    /**
+     * Tag for log messages.
+     */
     public static final String LOG_TAG = InventoryItemDbHelper.class.getName();
 
     /**
@@ -39,15 +42,15 @@ public class InventoryItemDbHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Create a String that contains the SQL statement to create the pets table
-        String SQL_CREATE_PETS_TABLE = "CREATE TABLE " + InventoryItemEntry.TABLE_NAME + " ("
+        // Create a String that contains the SQL statement to create the items table
+        String SQL_CREATE_TABLE = "CREATE TABLE " + InventoryItemEntry.TABLE_NAME + " ("
                 + InventoryItemEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + InventoryItemEntry.COLUMN_ITEM_NAME + " TEXT NOT NULL, "
                 + InventoryItemEntry.COLUMN_ITEM_QUANTITY + " INTEGER NOT NULL, "
                 + InventoryItemEntry.COLUMN_ITEM_PRICE + " REAL NOT NULL);";
 
         // Execute the SQL statement
-        db.execSQL(SQL_CREATE_PETS_TABLE);
+        db.execSQL(SQL_CREATE_TABLE);
     }
 
     /**
@@ -57,4 +60,5 @@ public class InventoryItemDbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // The database is still at version 1, so there's nothing to do be done here.
     }
+
 }

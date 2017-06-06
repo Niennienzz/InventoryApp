@@ -16,6 +16,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:name=".data.InventoryItemProvider"
+            android:authorities="com.example.zhehui.inventory"
+            android:exported="false" />
     </application>
 
 </manifest>
