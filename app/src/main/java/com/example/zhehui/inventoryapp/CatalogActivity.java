@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.zhehui.inventoryapp.data.InventoryItemContract.InventoryItemEntry;
@@ -45,7 +46,7 @@ public class CatalogActivity extends AppCompatActivity implements
         mCursorAdapter = new InventoryItemCursorAdapter(this, null);
         itemListView.setAdapter(mCursorAdapter);
 
-        // Setup the item click listener
+        // Setup the item click listener.
         itemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -57,6 +58,16 @@ public class CatalogActivity extends AppCompatActivity implements
                 intent.setData(currentItemUri);
 
                 // Launch the {@link EditorActivity} to display the data for the current item.
+                startActivity(intent);
+            }
+        });
+
+        // Setup the button listener.
+        Button button = (Button) findViewById(R.id.catalog_button);
+        button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
                 startActivity(intent);
             }
         });
@@ -92,4 +103,5 @@ public class CatalogActivity extends AppCompatActivity implements
     public void onLoaderReset(Loader<Cursor> loader) {
         mCursorAdapter.swapCursor(null);
     }
+
 }
