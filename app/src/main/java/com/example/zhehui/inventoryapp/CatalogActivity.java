@@ -64,7 +64,7 @@ public class CatalogActivity extends AppCompatActivity implements
 
         // Setup the button listener.
         Button button = (Button) findViewById(R.id.catalog_button);
-        button.setOnClickListener(new View.OnClickListener(){
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);

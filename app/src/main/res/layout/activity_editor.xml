@@ -53,7 +53,7 @@
 
             <!-- Name field -->
             <EditText
-                android:id="@+id/edit_pet_name"
+                android:id="@+id/edit_item_price"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/hint_item_price"
                 android:inputType="textCapWords" />
@@ -81,7 +81,7 @@
 
             <!-- Weight field -->
             <EditText
-                android:id="@+id/edit_pet_weight"
+                android:id="@+id/edit_item_quantity"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/hint_item_quantity"
                 android:inputType="number" />
