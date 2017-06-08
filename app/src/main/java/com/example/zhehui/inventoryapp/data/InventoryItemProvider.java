@@ -7,6 +7,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Log;
 
 import com.example.zhehui.inventoryapp.data.InventoryItemContract.InventoryItemEntry;
 
@@ -127,9 +128,48 @@ public class InventoryItemProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case ITEMS:
+                return insertItem(uri, contentValues);
             default:
                 throw new IllegalArgumentException("Insertion is not supported for " + uri);
         }
+    }
+
+    /**
+     * Insert an item into the database with the given content values.
+     * Return the new content URI for that specific row in the database.
+     */
+    private Uri insertItem(Uri uri, ContentValues values) {
+        // Sanity checks.
+        String name = values.getAsString(InventoryItemEntry.COLUMN_ITEM_NAME);
+        if (name == null) {
+            throw new IllegalArgumentException("Item requires a name.");
+        }
+
+        Float price = values.getAsFloat(InventoryItemEntry.COLUMN_ITEM_PRICE);
+        if (price == null) {
+            throw new IllegalArgumentException("Item requires a price.");
+        }
+
+        Integer quantity = values.getAsInteger(InventoryItemEntry.COLUMN_ITEM_QUANTITY);
+        if (quantity == null) {
+            throw new IllegalArgumentException("Item requires a quantity.");
+        }
+
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        long id = database.insert(InventoryItemEntry.TABLE_NAME, null, values);
+
+        // Insertion fail.
+        if (id == -1) {
+            Log.e(LOG_TAG, "Failed to insert to row for " + uri);
+            return null;
+        }
+
+        // Notify all listeners that the data has changed for the item content URI.
+        getContext().getContentResolver().notifyChange(uri, null);
+
+        // Return the new URI with the ID (of the newly inserted row) appended at the end.
+        return ContentUris.withAppendedId(uri, id);
     }
 
     @Override
@@ -138,11 +178,55 @@ public class InventoryItemProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case ITEMS:
+                return updateItem(uri, contentValues, selection, selectionArgs);
             case ITEM_ID:
-            case ITEM_NAME:
+                selection = InventoryItemEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                return updateItem(uri, contentValues, selection, selectionArgs);
             default:
                 throw new IllegalArgumentException("Update is not supported for " + uri);
         }
+    }
+
+    private int updateItem(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        // Sanity checks.
+        if (values.containsKey(InventoryItemEntry.COLUMN_ITEM_NAME)) {
+            String name = values.getAsString(InventoryItemEntry.COLUMN_ITEM_NAME);
+            if (name == null) {
+                throw new IllegalArgumentException("Item requires a name.");
+            }
+        }
+
+        if (values.containsKey(InventoryItemEntry.COLUMN_ITEM_PRICE)) {
+            Float price = values.getAsFloat(InventoryItemEntry.COLUMN_ITEM_PRICE);
+            if (price == null) {
+                throw new IllegalArgumentException("Item requires a price.");
+            }
+        }
+
+        if (values.containsKey(InventoryItemEntry.COLUMN_ITEM_QUANTITY)) {
+            Integer quantity = values.getAsInteger(InventoryItemEntry.COLUMN_ITEM_QUANTITY);
+            if (quantity == null) {
+                throw new IllegalArgumentException("Item requires a quantity.");
+            }
+        }
+
+        if (values.size() == 0) {
+            return 0;
+        }
+
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        int rowsUpdated = database.update(InventoryItemEntry.TABLE_NAME, values, selection, selectionArgs);
+
+        // If 1 or more rows were updated, then notify all listeners that the data at the
+        // given URI has changed.
+        if (rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        // Return the number of rows updated.
+        return rowsUpdated;
     }
 
     @Override
@@ -153,16 +237,25 @@ public class InventoryItemProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case ITEMS:
+                rowsDeleted = database.delete(InventoryItemEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             case ITEM_ID:
-            case ITEM_NAME:
+                selection = InventoryItemEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                rowsDeleted = database.delete(InventoryItemEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Deletion is not supported for " + uri);
         }
 
-//        if (rowsDeleted != 0) {
-//            getContext().getContentResolver().notifyChange(uri, null);
-//        }
-//        return rowsDeleted;
+        // If 1 or more rows were deleted, then notify all listeners that the data at the
+        // given URI has changed.
+        if (rowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        // Return the number of rows deleted.
+        return rowsDeleted;
     }
 
 }
