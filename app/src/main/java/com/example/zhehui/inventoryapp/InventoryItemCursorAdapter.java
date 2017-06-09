@@ -64,14 +64,16 @@ public class InventoryItemCursorAdapter extends CursorAdapter {
                 InventoryItemContract.InventoryItemEntry.COLUMN_ITEM_QUANTITY);
 
         // Read the item attributes from the Cursor for the current item.
-        String itemName = cursor.getString(nameColumnIndex);
-        Float itemPrice = cursor.getFloat(priceColumnIndex);
-        Integer itemQuantity = cursor.getInt(quantityColumnIndex);
+        String itemName = "<" + cursor.getString(nameColumnIndex) + ">";
+        Float itemPriceFloat = cursor.getFloat(priceColumnIndex);
+        String itemPrice = "Price: $" + itemPriceFloat.toString();
+        Integer itemQuantityInteger = cursor.getInt(quantityColumnIndex);
+        String itemQuantity = "Stock: " + itemQuantityInteger.toString();
 
         // Update the TextViews with the attributes for the current item.
         nameTextView.setText(itemName);
-        priceTextView.setText(itemPrice.toString());
-        quantityTextView.setText(itemQuantity.toString());
+        priceTextView.setText(itemPrice);
+        quantityTextView.setText(itemQuantity);
     }
 
 }

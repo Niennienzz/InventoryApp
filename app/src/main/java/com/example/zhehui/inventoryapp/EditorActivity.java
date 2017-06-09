@@ -111,11 +111,20 @@ public class EditorActivity extends AppCompatActivity implements
         mQuantityEditText.setOnTouchListener(mTouchListener);
 
         // Setup the button listener for add & update.
-        Button button = (Button) findViewById(R.id.editor_confirm);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button buttonConfirm = (Button) findViewById(R.id.editor_confirm);
+        buttonConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveItem();
+            }
+        });
+
+        // Setup the button listener for delete.
+        Button buttonDelete = (Button) findViewById(R.id.editor_delete);
+        buttonDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteItem();
             }
         });
     }
@@ -183,6 +192,24 @@ public class EditorActivity extends AppCompatActivity implements
         }
     }
 
+    private void deleteItem() {
+        // Only perform the delete if this is an existing item.
+        if (mCurrentItemUri != null) {
+            int rowsDeleted = getContentResolver().delete(mCurrentItemUri, null, null);
+            if (rowsDeleted == 0) {
+                Toast.makeText(this, getString(R.string.editor_delete_item_failed),
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, getString(R.string.editor_delete_item_successful),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        // Close the activity.
+        finish();
+    }
+
+    // Satisfy the Cursor Loader interface.
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         // Since the editor shows all item attributes, define a projection that contains
