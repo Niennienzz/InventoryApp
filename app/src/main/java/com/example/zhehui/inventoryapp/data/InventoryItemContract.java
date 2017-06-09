@@ -15,7 +15,6 @@ public class InventoryItemContract {
     public static final String CONTENT_AUTHORITY = "com.example.zhehui.inventory";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
     public static final String PATH_ITEMS = "items";
-    public static final String PATH_ITEM_NAME = "itemNames";
 
     /**
      * A private empty constructor preventing someone from

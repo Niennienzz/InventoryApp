@@ -26,7 +26,6 @@ public class InventoryItemProvider extends ContentProvider {
      */
     private static final int ITEMS = 100;
     private static final int ITEM_ID = 101;
-    private static final int ITEM_NAME = 102;
 
     /**
      * UriMatcher object to match a content URI to a corresponding code.
@@ -46,11 +45,6 @@ public class InventoryItemProvider extends ContentProvider {
                 InventoryItemContract.CONTENT_AUTHORITY,
                 InventoryItemContract.PATH_ITEMS + "/#",
                 ITEM_ID);
-
-        sUriMatcher.addURI(
-                InventoryItemContract.CONTENT_AUTHORITY,
-                InventoryItemContract.PATH_ITEM_NAME + "/*",
-                ITEM_NAME);
     }
 
     /**
@@ -77,20 +71,13 @@ public class InventoryItemProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
         switch (match) {
             case ITEMS:
-                // Example "content://com.example.zhehui.inventory/items/3"
+                // Example "content://com.example.zhehui.inventory/items"
                 cursor = database.query(InventoryItemEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
             case ITEM_ID:
                 // Example "content://com.example.zhehui.inventory/items/3"
                 selection = InventoryItemEntry._ID + "=?";
-                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                cursor = database.query(InventoryItemEntry.TABLE_NAME, projection, selection, selectionArgs,
-                        null, null, sortOrder);
-                break;
-            case ITEM_NAME:
-                // Example "content://com.example.zhehui.inventory/itemNames/HeadPhone"
-                selection = InventoryItemEntry.COLUMN_ITEM_NAME + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 cursor = database.query(InventoryItemEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
@@ -115,8 +102,6 @@ public class InventoryItemProvider extends ContentProvider {
             case ITEMS:
                 return InventoryItemEntry.CONTENT_LIST_TYPE;
             case ITEM_ID:
-                return InventoryItemEntry.CONTENT_ITEM_TYPE;
-            case ITEM_NAME:
                 return InventoryItemEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalStateException("Unknown URI " + uri + " with match " + match);
