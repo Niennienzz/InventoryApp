@@ -88,4 +88,17 @@
         </RelativeLayout>
     </LinearLayout>
 
+    <Button
+        android:id="@+id/editor_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="@string/button_confirm_add_new_item" />
+
+    <Button
+        android:id="@+id/editor_delete"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorAccent"
+        android:text="@string/button_delete_existing_item" />
+
 </LinearLayout>
