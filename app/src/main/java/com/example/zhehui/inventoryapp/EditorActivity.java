@@ -93,7 +93,6 @@ public class EditorActivity extends AppCompatActivity implements
         // If the intent DOES NOT contain a item content URI,
         // then we know that we are creating a new item.
         if (mCurrentItemUri == null) {
-
             // This is a new item, so change the app bar to say "Add a Item"
             setTitle(getString(R.string.editor_activity_title_new_item));
 
@@ -160,11 +159,6 @@ public class EditorActivity extends AppCompatActivity implements
     }
 
     private void saveItem() {
-        // Check if fields are changed.
-        if (!mItemHasChanged) {
-            return;
-        }
-
         // Read from input fields.
         String nameString = mNameEditText.getText().toString().trim();
         String priceString = mPriceEditText.getText().toString().trim();
