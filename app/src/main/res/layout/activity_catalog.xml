@@ -17,7 +17,7 @@
             android:layout_weight="1" />
 
         <Button
-            android:id="@+id/catalog_button"
+            android:id="@+id/catalog_button_add_item"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:text="@string/button_add_new_item" />

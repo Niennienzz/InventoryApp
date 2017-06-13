@@ -4,6 +4,7 @@
     <string name="action_delete_all_entries">Delete All Items</string>
     <string name="empty_view_title_text">No items yet in the inventory...</string>
     <string name="empty_view_subtitle_text">Get started by adding an item.</string>
+    <string name="button_sell_item">Sell</string>
     <string name="button_add_new_item">Add Item</string>
     <string name="button_confirm_add_new_item">Confirm</string>
     <string name="button_delete_existing_item">Delete</string>
