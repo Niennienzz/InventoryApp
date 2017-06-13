@@ -10,13 +10,17 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
-import android.view.MotionEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.zhehui.inventoryapp.data.InventoryItemContract.InventoryItemEntry;
@@ -49,7 +53,7 @@ public class EditorActivity extends AppCompatActivity implements
     /**
      * EditText field to enter the item's quantity.
      */
-    private EditText mQuantityEditText;
+    private TextView mQuantityTextView;
 
     /**
      * EditText field to enter the item's information.
@@ -67,15 +71,22 @@ public class EditorActivity extends AppCompatActivity implements
     private boolean mItemHasChanged = false;
 
     /**
-     * OnTouchListener that listens for any user touches on a View,
-     * implying that they are modifying the view,
-     * and we change the mItemHasChanged boolean to true.
+     * TextWatcher to monitor text fields.
      */
-    private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
+    private TextWatcher mTextWatcher = new TextWatcher() {
         @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            mItemHasChanged = true;
-            return false;
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
         }
     };
 
@@ -109,20 +120,18 @@ public class EditorActivity extends AppCompatActivity implements
         }
 
         // Find all relevant views that we will need to read user input from.
-        mNameEditText = (EditText) findViewById(R.id.edit_item_name);
-        mPriceEditText = (EditText) findViewById(R.id.edit_item_price);
-        mQuantityEditText = (EditText) findViewById(R.id.edit_item_quantity);
-        mInfoEditText = (EditText) findViewById(R.id.edit_item_info);
-        mEmailEditText = (EditText) findViewById(R.id.edit_item_email);
+        mNameEditText = (EditText) findViewById(R.id.editor_item_name);
+        mPriceEditText = (EditText) findViewById(R.id.editor_item_price);
+        mQuantityTextView = (TextView) findViewById(R.id.editor_item_quantity);
+        mInfoEditText = (EditText) findViewById(R.id.editor_item_info);
+        mEmailEditText = (EditText) findViewById(R.id.editor_item_email);
 
-        // Setup OnTouchListeners on all the input fields, so we can determine if the user
-        // has touched or modified them. This will let us know if there are unsaved changes
-        // or not, if the user tries to leave the editor without saving.
-        mNameEditText.setOnTouchListener(mTouchListener);
-        mPriceEditText.setOnTouchListener(mTouchListener);
-        mQuantityEditText.setOnTouchListener(mTouchListener);
-        mInfoEditText.setOnTouchListener(mTouchListener);
-        mEmailEditText.setOnTouchListener(mTouchListener);
+        // Setup TextWatchers on all the input fields.
+        mNameEditText.addTextChangedListener(mTextWatcher);
+        mPriceEditText.addTextChangedListener(mTextWatcher);
+        mQuantityTextView.addTextChangedListener(mTextWatcher);
+        mInfoEditText.addTextChangedListener(mTextWatcher);
+        mEmailEditText.addTextChangedListener(mTextWatcher);
 
         // Setup the button listener for add & update.
         Button buttonConfirm = (Button) findViewById(R.id.editor_save_item);
@@ -156,13 +165,42 @@ public class EditorActivity extends AppCompatActivity implements
                 }
             }
         });
+
+        // Setup the button listener for sell.
+        Button buttonSell = (Button) findViewById(R.id.editor_item_sell);
+        buttonSell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String quantityString = mQuantityTextView.getText().toString();
+                int quantity = Integer.parseInt(quantityString);
+                if (quantity > 0) {
+                    quantity -= 1;
+                }
+                mQuantityTextView.setText(Integer.toString(quantity));
+            }
+        });
+
+        // Setup the button listener for receive.
+        Button buttonReceive = (Button) findViewById(R.id.editor_item_receive);
+        buttonReceive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String quantityString = mQuantityTextView.getText().toString();
+                int quantity = Integer.parseInt(quantityString);
+                quantity += 1;
+                mQuantityTextView.setText(Integer.toString(quantity));
+            }
+        });
     }
 
     private void saveItem() {
+        // All fields are up-to-date.
+        mItemHasChanged = false;
+
         // Read from input fields.
         String nameString = mNameEditText.getText().toString().trim();
         String priceString = mPriceEditText.getText().toString().trim();
-        String quantityString = mQuantityEditText.getText().toString().trim();
+        String quantityString = mQuantityTextView.getText().toString().trim();
         String infoString = mInfoEditText.getText().toString().trim();
         String emailString = mEmailEditText.getText().toString().trim();
 
@@ -225,6 +263,7 @@ public class EditorActivity extends AppCompatActivity implements
                         Toast.LENGTH_SHORT).show();
             }
         }
+        finish();
     }
 
     private void deleteItem() {
@@ -298,7 +337,7 @@ public class EditorActivity extends AppCompatActivity implements
             // Update the views on the screen with the values from the database.
             mNameEditText.setText(name);
             mPriceEditText.setText(Float.toString(price));
-            mQuantityEditText.setText(Integer.toString(quantity));
+            mQuantityTextView.setText(Integer.toString(quantity));
             mInfoEditText.setText(info);
             mEmailEditText.setText(email);
         }
@@ -309,7 +348,7 @@ public class EditorActivity extends AppCompatActivity implements
         // If the loader is invalidated, clear out all the data from the input fields.
         mNameEditText.setText("");
         mPriceEditText.setText("");
-        mQuantityEditText.setText("");
+        mQuantityTextView.setText("");
         mInfoEditText.setText("");
         mEmailEditText.setText("");
     }
@@ -338,6 +377,38 @@ public class EditorActivity extends AppCompatActivity implements
 
         // Show dialog that there are unsaved changes.
         showUnsavedChangesDialog(discardButtonClickListener);
+    }
+
+    /**
+     * This method is called when the 'up-back' button is pressed.
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // If the item hasn't changed, continue with handling back button press.
+                if (!mItemHasChanged) {
+                    NavUtils.navigateUpFromSameTask(EditorActivity.this);
+                    return true;
+                }
+
+                // Otherwise if there are unsaved changes, setup a dialog to warn the user.
+                // Create a click listener to handle the user confirming that
+                // changes should be discarded.
+                DialogInterface.OnClickListener discardButtonClickListener =
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // User clicked "Discard" button, navigate to parent activity.
+                                NavUtils.navigateUpFromSameTask(EditorActivity.this);
+                            }
+                        };
+
+                // Show a dialog that notifies the user they have unsaved changes
+                showUnsavedChangesDialog(discardButtonClickListener);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**

@@ -25,7 +25,7 @@
 
             <!-- Name field -->
             <EditText
-                android:id="@+id/edit_item_name"
+                android:id="@+id/editor_item_name"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/hint_item_name"
                 android:inputType="textCapWords" />
@@ -53,7 +53,7 @@
 
             <!-- Name field -->
             <EditText
-                android:id="@+id/edit_item_price"
+                android:id="@+id/editor_item_price"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/hint_item_price"
                 android:inputType="textCapWords" />
@@ -64,27 +64,36 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="15">
 
         <!-- Label -->
         <TextView
             style="@style/CategoryStyle"
+            android:layout_weight="10"
             android:text="@string/category_quantity" />
 
         <!-- Input fields -->
-        <RelativeLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/editor_item_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/text_zero_value" />
+
+        <Button
+            android:id="@+id/editor_item_sell"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:paddingLeft="4dp">
+            android:text="@string/button_sell_item" />
 
-            <!-- Weight field -->
-            <EditText
-                android:id="@+id/edit_item_quantity"
-                style="@style/EditorFieldStyle"
-                android:hint="@string/hint_item_quantity"
-                android:inputType="number" />
-        </RelativeLayout>
+        <Button
+            android:id="@+id/editor_item_receive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="@string/button_receive_item" />
     </LinearLayout>
 
     <!-- Information category -->
@@ -107,14 +116,14 @@
 
             <!-- Weight field -->
             <EditText
-                android:id="@+id/edit_item_info"
+                android:id="@+id/editor_item_info"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/hint_item_info"
                 android:inputType="text" />
         </RelativeLayout>
     </LinearLayout>
 
-    <!-- Information category -->
+    <!-- Email category -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -134,7 +143,7 @@
 
             <!-- Weight field -->
             <EditText
-                android:id="@+id/edit_item_email"
+                android:id="@+id/editor_item_email"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/hint_item_email"
                 android:inputType="textEmailAddress" />
