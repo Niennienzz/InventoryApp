@@ -86,7 +86,7 @@ public class EditorActivity extends AppCompatActivity implements
 
         @Override
         public void afterTextChanged(Editable s) {
-
+            mItemHasChanged = true;
         }
     };
 
