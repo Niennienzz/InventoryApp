@@ -62,7 +62,6 @@
 
     <!-- Quantity category -->
     <LinearLayout
-        android:id="@+id/container_measurement"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -88,17 +87,84 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/editor_confirm"
+    <!-- Information category -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="@string/button_confirm_add_new_item" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/editor_delete"
+        <!-- Label -->
+        <TextView
+            style="@style/CategoryStyle"
+            android:text="@string/category_info" />
+
+        <!-- Input fields -->
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:paddingLeft="4dp">
+
+            <!-- Weight field -->
+            <EditText
+                android:id="@+id/edit_item_info"
+                style="@style/EditorFieldStyle"
+                android:hint="@string/hint_item_info"
+                android:inputType="text" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <!-- Information category -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/colorAccent"
-        android:text="@string/button_delete_existing_item" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
+        <!-- Label -->
+        <TextView
+            style="@style/CategoryStyle"
+            android:text="@string/category_email" />
+
+        <!-- Input fields -->
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:paddingLeft="4dp">
+
+            <!-- Weight field -->
+            <EditText
+                android:id="@+id/edit_item_email"
+                style="@style/EditorFieldStyle"
+                android:hint="@string/hint_item_email"
+                android:inputType="textEmailAddress" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/editor_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/editor_order"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/button_order_from_supplier" />
+
+        <Button
+            android:id="@+id/editor_save_item"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_above="@+id/editor_delete"
+            android:text="@string/button_confirm_add_new_item" />
+
+        <Button
+            android:id="@+id/editor_delete"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:text="@string/button_delete_existing_item"
+            android:textColor="@color/colorAccent" />
+    </RelativeLayout>
 </LinearLayout>

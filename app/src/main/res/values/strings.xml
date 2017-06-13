@@ -6,8 +6,9 @@
     <string name="empty_view_subtitle_text">Get started by adding an item.</string>
     <string name="button_sell_item">Sell</string>
     <string name="button_add_new_item">Add Item</string>
-    <string name="button_confirm_add_new_item">Confirm</string>
+    <string name="button_confirm_add_new_item">Save Item</string>
     <string name="button_delete_existing_item">Delete</string>
+    <string name="button_order_from_supplier">Order More</string>
     <string name="editor_activity_title_new_item">Add an Item</string>
     <string name="editor_activity_title_edit_item">Edit Item</string>
     <string name="action_save">Save</string>
@@ -27,7 +28,11 @@
     <string name="category_name">Name</string>
     <string name="category_price">Price</string>
     <string name="category_quantity">Quantity</string>
+    <string name="category_info">Information</string>
+    <string name="category_email">Email</string>
     <string name="hint_item_name">Name</string>
     <string name="hint_item_price">Price</string>
     <string name="hint_item_quantity">Quantity</string>
+    <string name="hint_item_info">Add Description</string>
+    <string name="hint_item_email">Supplier Email</string>
 </resources>

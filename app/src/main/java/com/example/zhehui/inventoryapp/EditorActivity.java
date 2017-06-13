@@ -1,8 +1,10 @@
 package com.example.zhehui.inventoryapp;
 
+import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -17,7 +19,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.zhehui.inventoryapp.data.InventoryItemContract;
 import com.example.zhehui.inventoryapp.data.InventoryItemContract.InventoryItemEntry;
 
 public class EditorActivity extends AppCompatActivity implements
@@ -51,7 +52,17 @@ public class EditorActivity extends AppCompatActivity implements
     private EditText mQuantityEditText;
 
     /**
-     * Boolean flag that keeps track of whether the item has been edited (true) or not (false)
+     * EditText field to enter the item's information.
+     */
+    private EditText mInfoEditText;
+
+    /**
+     * EditText field to enter the item's supplier email.
+     */
+    private EditText mEmailEditText;
+
+    /**
+     * Boolean flag that keeps track of whether the item has been edited (true) or not (false).
      */
     private boolean mItemHasChanged = false;
 
@@ -102,6 +113,8 @@ public class EditorActivity extends AppCompatActivity implements
         mNameEditText = (EditText) findViewById(R.id.edit_item_name);
         mPriceEditText = (EditText) findViewById(R.id.edit_item_price);
         mQuantityEditText = (EditText) findViewById(R.id.edit_item_quantity);
+        mInfoEditText = (EditText) findViewById(R.id.edit_item_info);
+        mEmailEditText = (EditText) findViewById(R.id.edit_item_email);
 
         // Setup OnTouchListeners on all the input fields, so we can determine if the user
         // has touched or modified them. This will let us know if there are unsaved changes
@@ -109,9 +122,11 @@ public class EditorActivity extends AppCompatActivity implements
         mNameEditText.setOnTouchListener(mTouchListener);
         mPriceEditText.setOnTouchListener(mTouchListener);
         mQuantityEditText.setOnTouchListener(mTouchListener);
+        mInfoEditText.setOnTouchListener(mTouchListener);
+        mEmailEditText.setOnTouchListener(mTouchListener);
 
         // Setup the button listener for add & update.
-        Button buttonConfirm = (Button) findViewById(R.id.editor_confirm);
+        Button buttonConfirm = (Button) findViewById(R.id.editor_save_item);
         buttonConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,23 +139,47 @@ public class EditorActivity extends AppCompatActivity implements
         buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteItem();
+                showDeleteConfirmationDialog();
+            }
+        });
+
+        // Setup the button listener for order more from supplier.
+        Button buttonOrderMore = (Button) findViewById(R.id.editor_order);
+        buttonOrderMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_EMAIL, mEmailEditText.getText().toString());
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Order");
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
             }
         });
     }
 
     private void saveItem() {
+        // Check if fields are changed.
+        if (!mItemHasChanged) {
+            return;
+        }
+
         // Read from input fields.
         String nameString = mNameEditText.getText().toString().trim();
         String priceString = mPriceEditText.getText().toString().trim();
         String quantityString = mQuantityEditText.getText().toString().trim();
+        String infoString = mInfoEditText.getText().toString().trim();
+        String emailString = mEmailEditText.getText().toString().trim();
 
         // Check if this is supposed to be a new item
         // and check if all the fields in the editor are blank.
         if (mCurrentItemUri == null &&
                 TextUtils.isEmpty(nameString) &&
                 TextUtils.isEmpty(priceString) &&
-                TextUtils.isEmpty(quantityString)) {
+                TextUtils.isEmpty(quantityString) &&
+                TextUtils.isEmpty(infoString) &&
+                TextUtils.isEmpty(emailString)) {
             Toast.makeText(this, "Fields are empty.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -169,6 +208,8 @@ public class EditorActivity extends AppCompatActivity implements
         values.put(InventoryItemEntry.COLUMN_ITEM_NAME, nameString);
         values.put(InventoryItemEntry.COLUMN_ITEM_PRICE, priceFloat);
         values.put(InventoryItemEntry.COLUMN_ITEM_QUANTITY, quantityInteger);
+        values.put(InventoryItemEntry.COLUMN_ITEM_INFO, infoString);
+        values.put(InventoryItemEntry.COLUMN_ITEM_EMAIL, emailString);
 
         // Determine adding new item or update existing item.
         if (mCurrentItemUri == null) {
@@ -218,7 +259,9 @@ public class EditorActivity extends AppCompatActivity implements
                 InventoryItemEntry._ID,
                 InventoryItemEntry.COLUMN_ITEM_NAME,
                 InventoryItemEntry.COLUMN_ITEM_PRICE,
-                InventoryItemEntry.COLUMN_ITEM_QUANTITY};
+                InventoryItemEntry.COLUMN_ITEM_QUANTITY,
+                InventoryItemEntry.COLUMN_ITEM_INFO,
+                InventoryItemEntry.COLUMN_ITEM_EMAIL};
 
         // This loader will execute the ContentProvider's query method on a background thread.
         return new CursorLoader(this,   // Parent activity context.
@@ -241,21 +284,29 @@ public class EditorActivity extends AppCompatActivity implements
         if (cursor.moveToFirst()) {
             // Find the columns of item attributes that we're interested in.
             int nameColumnIndex = cursor.getColumnIndex(
-                    InventoryItemContract.InventoryItemEntry.COLUMN_ITEM_NAME);
+                    InventoryItemEntry.COLUMN_ITEM_NAME);
             int priceColumnIndex = cursor.getColumnIndex(
-                    InventoryItemContract.InventoryItemEntry.COLUMN_ITEM_PRICE);
+                    InventoryItemEntry.COLUMN_ITEM_PRICE);
             int quantityColumnIndex = cursor.getColumnIndex(
-                    InventoryItemContract.InventoryItemEntry.COLUMN_ITEM_QUANTITY);
+                    InventoryItemEntry.COLUMN_ITEM_QUANTITY);
+            int infoColumnIndex = cursor.getColumnIndex(
+                    InventoryItemEntry.COLUMN_ITEM_INFO);
+            int emailColumnIndex = cursor.getColumnIndex(
+                    InventoryItemEntry.COLUMN_ITEM_EMAIL);
 
             // Read the item attributes from the Cursor for the current item.
             String name = cursor.getString(nameColumnIndex);
             Float price = cursor.getFloat(priceColumnIndex);
             Integer quantity = cursor.getInt(quantityColumnIndex);
+            String info = cursor.getString(infoColumnIndex);
+            String email = cursor.getString(emailColumnIndex);
 
             // Update the views on the screen with the values from the database.
             mNameEditText.setText(name);
             mPriceEditText.setText(Float.toString(price));
             mQuantityEditText.setText(Integer.toString(quantity));
+            mInfoEditText.setText(info);
+            mEmailEditText.setText(email);
         }
     }
 
@@ -265,6 +316,76 @@ public class EditorActivity extends AppCompatActivity implements
         mNameEditText.setText("");
         mPriceEditText.setText("");
         mQuantityEditText.setText("");
+        mInfoEditText.setText("");
+        mEmailEditText.setText("");
+    }
+
+    /**
+     * This method is called when the back button is pressed.
+     */
+    @Override
+    public void onBackPressed() {
+        // If the item hasn't changed, continue with handling back button press.
+        if (!mItemHasChanged) {
+            super.onBackPressed();
+            return;
+        }
+
+        // Otherwise if there are unsaved changes, setup a dialog to warn the user.
+        // Create a click listener to handle the user confirming that changes should be discarded.
+        DialogInterface.OnClickListener discardButtonClickListener =
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // User clicked "Discard" button, close the current activity.
+                        finish();
+                    }
+                };
+
+        // Show dialog that there are unsaved changes.
+        showUnsavedChangesDialog(discardButtonClickListener);
+    }
+
+    /**
+     * Prompt the user to leave that fields of current item has changed.
+     */
+    private void showUnsavedChangesDialog(
+            DialogInterface.OnClickListener discardButtonClickListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.unsaved_changes_dialog_msg);
+        builder.setPositiveButton(R.string.discard, discardButtonClickListener);
+        builder.setNegativeButton(R.string.keep_editing, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    /**
+     * Prompt the user to confirm that they want to delete this item.
+     */
+    private void showDeleteConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_dialog_msg);
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Delete" button, so delete the item.
+                deleteItem();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
 }

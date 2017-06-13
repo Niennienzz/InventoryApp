@@ -37,16 +37,16 @@
             android:textColor="#AEB6BD" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="2"
-        android:orientation="vertical">
+    <!--<LinearLayout-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_weight="2"-->
+    <!--android:orientation="vertical">-->
 
-        <Button
-            android:id="@+id/item_sell"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="@string/button_sell_item" />
-    </LinearLayout>
+    <!--<Button-->
+    <!--android:id="@+id/item_sell"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="50dp"-->
+    <!--android:text="@string/button_sell_item" />-->
+    <!--</LinearLayout>-->
 </LinearLayout>

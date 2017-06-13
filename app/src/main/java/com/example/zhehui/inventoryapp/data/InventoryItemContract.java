@@ -75,6 +75,24 @@ public class InventoryItemContract {
          */
         public final static String COLUMN_ITEM_PRICE = "price";
 
+        /**
+         * Information of the item.
+         * SQLite Type: TEXT
+         */
+        public final static String COLUMN_ITEM_INFO = "info";
+
+        /**
+         * Supplier email of the item.
+         * SQLite Type: TEXT
+         */
+        public final static String COLUMN_ITEM_EMAIL = "email";
+
+        /**
+         * Picture the item.
+         * SQLite Type: BLOB
+         */
+        public final static String COLUMN_ITEM_PICTURE = "picture";
+
     }
 
 }

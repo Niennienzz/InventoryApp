@@ -140,6 +140,16 @@ public class InventoryItemProvider extends ContentProvider {
             throw new IllegalArgumentException("Item requires a quantity.");
         }
 
+        String info = values.getAsString(InventoryItemEntry.COLUMN_ITEM_INFO);
+        if (info == null) {
+            throw new IllegalArgumentException("Item requires an information.");
+        }
+
+        String email = values.getAsString(InventoryItemEntry.COLUMN_ITEM_EMAIL);
+        if (email == null) {
+            throw new IllegalArgumentException("Item requires a supplier email address.");
+        }
+
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
         long id = database.insert(InventoryItemEntry.TABLE_NAME, null, values);
