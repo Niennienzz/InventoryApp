@@ -83,7 +83,7 @@ public class EditorActivity extends AppCompatActivity implements
     /**
      * Gallery URI of the picture of the item.
      */
-    private Uri mGalleryUri;
+    private Uri mImageUri;
 
     /**
      * Boolean flag that keeps track of whether the item has been edited (true) or not (false).
@@ -240,6 +240,7 @@ public class EditorActivity extends AppCompatActivity implements
         String quantityString = mQuantityTextView.getText().toString().trim();
         String infoString = mInfoEditText.getText().toString().trim();
         String emailString = mEmailEditText.getText().toString().trim();
+        String imageString = mImageUri.toString().trim();
 
         // Check if this is supposed to be a new item
         // and check if all the fields in the editor are blank.
@@ -317,6 +318,7 @@ public class EditorActivity extends AppCompatActivity implements
         values.put(InventoryItemEntry.COLUMN_ITEM_QUANTITY, quantityInteger);
         values.put(InventoryItemEntry.COLUMN_ITEM_INFO, infoString);
         values.put(InventoryItemEntry.COLUMN_ITEM_EMAIL, emailString);
+        values.put(InventoryItemEntry.COLUMN_ITEM_PICTURE, imageString);
 
         // Determine adding new item or update existing item.
         if (mCurrentItemUri == null) {
@@ -369,7 +371,8 @@ public class EditorActivity extends AppCompatActivity implements
                 InventoryItemEntry.COLUMN_ITEM_PRICE,
                 InventoryItemEntry.COLUMN_ITEM_QUANTITY,
                 InventoryItemEntry.COLUMN_ITEM_INFO,
-                InventoryItemEntry.COLUMN_ITEM_EMAIL};
+                InventoryItemEntry.COLUMN_ITEM_EMAIL,
+                InventoryItemEntry.COLUMN_ITEM_PICTURE};
 
         // This loader will execute the ContentProvider's query method on a background thread.
         return new CursorLoader(this,   // Parent activity context.
@@ -401,6 +404,8 @@ public class EditorActivity extends AppCompatActivity implements
                     InventoryItemEntry.COLUMN_ITEM_INFO);
             int emailColumnIndex = cursor.getColumnIndex(
                     InventoryItemEntry.COLUMN_ITEM_EMAIL);
+            int imageColumnIndex = cursor.getColumnIndex(
+                    InventoryItemEntry.COLUMN_ITEM_PICTURE);
 
             // Read the item attributes from the Cursor for the current item.
             String name = cursor.getString(nameColumnIndex);
@@ -408,6 +413,7 @@ public class EditorActivity extends AppCompatActivity implements
             Integer quantity = cursor.getInt(quantityColumnIndex);
             String info = cursor.getString(infoColumnIndex);
             String email = cursor.getString(emailColumnIndex);
+            String imageString = cursor.getString(imageColumnIndex);
 
             // Update the views on the screen with the values from the database.
             mNameEditText.setText(name);
@@ -415,6 +421,11 @@ public class EditorActivity extends AppCompatActivity implements
             mQuantityTextView.setText(Integer.toString(quantity));
             mInfoEditText.setText(info);
             mEmailEditText.setText(email);
+
+            if (!TextUtils.isEmpty(imageString)) {
+                mImageUri = Uri.parse(imageString);
+                mImageView.setImageBitmap(getBitmapFromUri(mImageUri));
+            }
         }
     }
 
@@ -533,9 +544,9 @@ public class EditorActivity extends AppCompatActivity implements
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
             if (resultData != null) {
-                mGalleryUri = resultData.getData();
-                Log.i(LOG_TAG, "Uri: " + mGalleryUri.toString());
-                mImageView.setImageBitmap(getBitmapFromUri(mGalleryUri));
+                mImageUri = resultData.getData();
+                Log.i(LOG_TAG, "Uri: " + mImageUri.toString());
+                mImageView.setImageBitmap(getBitmapFromUri(mImageUri));
             }
         }
     }
