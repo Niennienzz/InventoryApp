@@ -10,6 +10,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -212,7 +213,37 @@ public class EditorActivity extends AppCompatActivity implements
                 TextUtils.isEmpty(quantityString) &&
                 TextUtils.isEmpty(infoString) &&
                 TextUtils.isEmpty(emailString)) {
-            Toast.makeText(this, "Fields are empty.", Toast.LENGTH_SHORT).show();
+            Snackbar.make(
+                    findViewById(R.id.editor_coordinator),
+                    R.string.user_fields_empty,
+                    Snackbar.LENGTH_SHORT)
+                    .show();
+            return;
+        }
+
+        // Validate input strings, cannot be empty.
+        if (TextUtils.isEmpty(nameString)) {
+            Snackbar.make(
+                    findViewById(R.id.editor_coordinator),
+                    R.string.user_item_name_empty,
+                    Snackbar.LENGTH_SHORT)
+                    .show();
+            return;
+        }
+        if (TextUtils.isEmpty(infoString)) {
+            Snackbar.make(
+                    findViewById(R.id.editor_coordinator),
+                    R.string.user_item_info_empty,
+                    Snackbar.LENGTH_SHORT)
+                    .show();
+            return;
+        }
+        if (TextUtils.isEmpty(emailString)) {
+            Snackbar.make(
+                    findViewById(R.id.editor_coordinator),
+                    R.string.user_item_email_empty,
+                    Snackbar.LENGTH_SHORT)
+                    .show();
             return;
         }
 
@@ -223,7 +254,11 @@ public class EditorActivity extends AppCompatActivity implements
             priceFloat = Float.parseFloat(priceString);
         } catch (NumberFormatException e) {
             Log.e(LOG_TAG, "Error parsing price value, require 'Float'.");
-            Toast.makeText(this, "Invalid price.", Toast.LENGTH_SHORT).show();
+            Snackbar.make(
+                    findViewById(R.id.editor_coordinator),
+                    R.string.user_item_price_invalid,
+                    Snackbar.LENGTH_SHORT)
+                    .show();
             return;
         }
 
@@ -231,7 +266,11 @@ public class EditorActivity extends AppCompatActivity implements
             quantityInteger = Integer.parseInt(quantityString);
         } catch (NumberFormatException e) {
             Log.e(LOG_TAG, "Error parsing quantity value, require 'Integer'.");
-            Toast.makeText(this, "Invalid quantity.", Toast.LENGTH_SHORT).show();
+            Snackbar.make(
+                    findViewById(R.id.editor_coordinator),
+                    R.string.user_item_quantity_invalid,
+                    Snackbar.LENGTH_SHORT)
+                    .show();
             return;
         }
 

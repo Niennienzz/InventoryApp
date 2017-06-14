@@ -37,4 +37,10 @@
     <string name="hint_item_quantity">Quantity</string>
     <string name="hint_item_info">Add Description</string>
     <string name="hint_item_email">Supplier Email</string>
+    <string name="user_fields_empty">Fields are empty.</string>
+    <string name="user_item_name_empty">Item name is required.</string>
+    <string name="user_item_info_empty">Item information is required.</string>
+    <string name="user_item_email_empty">Item supplier Email is required.</string>
+    <string name="user_item_price_invalid">Invalid price.</string>
+    <string name="user_item_quantity_invalid">Invalid quantity.</string>
 </resources>
