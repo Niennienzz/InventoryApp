@@ -10,6 +10,7 @@
     <string name="button_confirm_add_new_item">Save Item</string>
     <string name="button_delete_existing_item">Delete</string>
     <string name="button_order_from_supplier">Order More</string>
+    <string name="button_pick_a_picture">Pick A Picture</string>
     <string name="text_zero_value">0</string>
     <string name="editor_activity_title_new_item">Add an Item</string>
     <string name="editor_activity_title_edit_item">Edit Item</string>

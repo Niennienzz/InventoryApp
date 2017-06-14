@@ -89,7 +89,7 @@ public class InventoryItemContract {
 
         /**
          * Picture the item.
-         * SQLite Type: BLOB
+         * SQLite Type: TEXT
          */
         public final static String COLUMN_ITEM_PICTURE = "picture";
 

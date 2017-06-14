@@ -1,5 +1,6 @@
 package com.example.zhehui.inventoryapp;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.ContentValues;
@@ -8,6 +9,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -21,15 +24,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.zhehui.inventoryapp.data.InventoryItemContract.InventoryItemEntry;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 public class EditorActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String LOG_TAG = EditorActivity.class.getName();
+    private static final int PICK_IMAGE_REQUEST = 0;
 
     /**
      * Identifier for the item data loader.
@@ -40,6 +49,11 @@ public class EditorActivity extends AppCompatActivity implements
      * Content URI for the existing item (null if it's a new item).
      */
     private Uri mCurrentItemUri;
+
+    /**
+     * Image view for them item's name.
+     */
+    private ImageView mImageView;
 
     /**
      * EditText field to enter the item's name.
@@ -65,6 +79,11 @@ public class EditorActivity extends AppCompatActivity implements
      * EditText field to enter the item's supplier email.
      */
     private EditText mEmailEditText;
+
+    /**
+     * Gallery URI of the picture of the item.
+     */
+    private Uri mGalleryUri;
 
     /**
      * Boolean flag that keeps track of whether the item has been edited (true) or not (false).
@@ -121,6 +140,7 @@ public class EditorActivity extends AppCompatActivity implements
         }
 
         // Find all relevant views that we will need to read user input from.
+        mImageView = (ImageView) findViewById(R.id.editor_item_pic);
         mNameEditText = (EditText) findViewById(R.id.editor_item_name);
         mPriceEditText = (EditText) findViewById(R.id.editor_item_price);
         mQuantityTextView = (TextView) findViewById(R.id.editor_item_quantity);
@@ -149,6 +169,21 @@ public class EditorActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 showDeleteConfirmationDialog();
+            }
+        });
+
+        // Setup the button listener for pick picture button
+        Button buttonPickPic = (Button) findViewById(R.id.editor_pick_picture);
+        buttonPickPic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(Intent.createChooser(intent, "Select Picture"),
+                            PICK_IMAGE_REQUEST);
+                }
             }
         });
 
@@ -386,6 +421,7 @@ public class EditorActivity extends AppCompatActivity implements
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         // If the loader is invalidated, clear out all the data from the input fields.
+        mImageView.setImageURI(null);
         mNameEditText.setText("");
         mPriceEditText.setText("");
         mQuantityTextView.setText("");
@@ -491,6 +527,60 @@ public class EditorActivity extends AppCompatActivity implements
         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+            if (resultData != null) {
+                mGalleryUri = resultData.getData();
+                Log.i(LOG_TAG, "Uri: " + mGalleryUri.toString());
+                mImageView.setImageBitmap(getBitmapFromUri(mGalleryUri));
+            }
+        }
+    }
+
+    public Bitmap getBitmapFromUri(Uri uri) {
+        if (uri == null || uri.toString().isEmpty())
+            return null;
+
+        int targetW = mImageView.getWidth();
+        int targetH = mImageView.getHeight();
+
+        InputStream input = null;
+        try {
+            input = this.getContentResolver().openInputStream(uri);
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            bmOptions.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(input, null, bmOptions);
+            input.close();
+
+            int photoW = bmOptions.outWidth;
+            int photoH = bmOptions.outHeight;
+            int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+
+            bmOptions.inJustDecodeBounds = false;
+            bmOptions.inSampleSize = scaleFactor;
+            bmOptions.inPurgeable = true;
+
+            input = this.getContentResolver().openInputStream(uri);
+            Bitmap bitmap = BitmapFactory.decodeStream(input, null, bmOptions);
+            input.close();
+            return bitmap;
+
+        } catch (FileNotFoundException fne) {
+            Log.e(LOG_TAG, "Failed to load image.", fne);
+            return null;
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Failed to load image.", e);
+            return null;
+        } finally {
+            try {
+                input.close();
+            } catch (IOException ioe) {
+
+            }
+        }
     }
 
 }
