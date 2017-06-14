@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -161,6 +162,7 @@ public class EditorActivity extends AppCompatActivity implements
                 intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_EMAIL, mEmailEditText.getText().toString());
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Order");
+                intent.putExtra(Intent.EXTRA_TEXT, mInfoEditText.getText().toString());
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
                 }

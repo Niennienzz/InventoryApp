@@ -33,7 +33,8 @@
                     android:id="@+id/editor_item_name"
                     style="@style/EditorFieldStyle"
                     android:hint="@string/hint_item_name"
-                    android:inputType="textCapWords" />
+                    android:inputType="textCapWords"
+                    android:maxLength="30" />
             </LinearLayout>
         </LinearLayout>
 
@@ -61,7 +62,8 @@
                     android:id="@+id/editor_item_price"
                     style="@style/EditorFieldStyle"
                     android:hint="@string/hint_item_price"
-                    android:inputType="textCapWords" />
+                    android:inputType="textCapWords"
+                    android:maxLength="10" />
             </LinearLayout>
         </LinearLayout>
 
@@ -151,7 +153,8 @@
                     android:id="@+id/editor_item_email"
                     style="@style/EditorFieldStyle"
                     android:hint="@string/hint_item_email"
-                    android:inputType="textEmailAddress" />
+                    android:inputType="textEmailAddress"
+                    android:maxLength="30" />
             </RelativeLayout>
         </LinearLayout>
 
@@ -163,20 +166,20 @@
             <Button
                 android:id="@+id/editor_order"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="@dimen/button_height_general"
                 android:text="@string/button_order_from_supplier" />
 
             <Button
                 android:id="@+id/editor_save_item"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="@dimen/button_height_general"
                 android:layout_above="@+id/editor_delete"
                 android:text="@string/button_confirm_add_new_item" />
 
             <Button
                 android:id="@+id/editor_delete"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="@dimen/button_height_general"
                 android:layout_alignParentBottom="true"
                 android:text="@string/button_delete_existing_item"
                 android:textColor="@color/colorAccent" />
