@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
@@ -53,13 +54,13 @@ public class InventoryItemCursorAdapter extends CursorAdapter {
         TextView nameTextView = (TextView) view.findViewById(R.id.item_name);
         TextView priceTextView = (TextView) view.findViewById(R.id.item_price);
         TextView quantityTextView = (TextView) view.findViewById(R.id.item_quantity);
-//        Button sellButton = (Button) view.findViewById(R.id.item_sell);
-//        sellButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
+        Button sellButton = (Button) view.findViewById(R.id.item_sell);
+        sellButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         // Find the columns of item attributes that we're interested in.
         int nameColumnIndex = cursor.getColumnIndex(
