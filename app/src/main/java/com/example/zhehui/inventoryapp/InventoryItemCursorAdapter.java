@@ -1,7 +1,9 @@
 package com.example.zhehui.inventoryapp;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,8 @@ import android.widget.CursorAdapter;
 import android.widget.TextView;
 
 import com.example.zhehui.inventoryapp.data.InventoryItemContract;
+import com.example.zhehui.inventoryapp.data.InventoryItemContract.InventoryItemEntry;
+import com.example.zhehui.inventoryapp.data.InventoryItemDbHelper;
 
 public class InventoryItemCursorAdapter extends CursorAdapter {
 
@@ -52,23 +56,38 @@ public class InventoryItemCursorAdapter extends CursorAdapter {
      *                correct row.
      */
     @Override
-    public void bindView(final View view, Context context, Cursor cursor) {
+    public void bindView(final View view, final Context context, Cursor cursor) {
         // Find individual views that we want to modify in the list item layout.
         final TextView nameTextView = (TextView) view.findViewById(R.id.item_name);
         final TextView priceTextView = (TextView) view.findViewById(R.id.item_price);
         final TextView quantityTextView = (TextView) view.findViewById(R.id.item_quantity);
         Button sellButton = (Button) view.findViewById(R.id.item_sell);
+        sellButton.setTag(view);
         sellButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // Get and update value.
                 String quantityString = quantityTextView.getText().toString();
                 quantityString = quantityString.replace(STOCK_TEXT, "");
                 int quantity = Integer.parseInt(quantityString);
                 if (quantity > 0) {
                     quantity -= 1;
                 }
+
+                // Update text view.
                 quantityString = STOCK_TEXT + Integer.toString(quantity);
                 quantityTextView.setText(quantityString);
+
+                // Update database.
+                InventoryItemDbHelper dbHelper = new InventoryItemDbHelper(context);
+                SQLiteDatabase db = dbHelper.getReadableDatabase();
+                String name = nameTextView.getText().toString();
+                String[] names = new String[]{name.replace("<", "").replace(">", "")};
+                String whereClause = "name=?";
+                ContentValues values = new ContentValues();
+                values.put(InventoryItemEntry.COLUMN_ITEM_QUANTITY, quantity);
+                db.update(InventoryItemEntry.TABLE_NAME, values, whereClause, names);
             }
         });
 
