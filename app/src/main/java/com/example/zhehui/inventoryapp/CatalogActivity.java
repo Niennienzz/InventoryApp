@@ -1,5 +1,6 @@
 package com.example.zhehui.inventoryapp;
 
+import android.Manifest;
 import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.CursorLoader;
@@ -19,11 +20,16 @@ import com.example.zhehui.inventoryapp.data.InventoryItemContract.InventoryItemE
 public class CatalogActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String LOG_TAG = CatalogActivity.class.getName();
+
     /**
      * Identifier for the item data loader
      */
     private static final int ITEM_LOADER = 0;
-
+    /**
+     * Permission
+     */
+    protected final String mManageDocumentPermission = Manifest.permission.MANAGE_DOCUMENTS;
     /**
      * Adapter for the ListView
      */
