@@ -13,6 +13,9 @@ import com.example.zhehui.inventoryapp.data.InventoryItemContract;
 
 public class InventoryItemCursorAdapter extends CursorAdapter {
 
+    private final static String PRICE_TEXT = "Price: $";
+    private final static String STOCK_TEXT = "Stock: ";
+
     /**
      * Constructs a new {@link InventoryItemCursorAdapter}.
      *
@@ -49,16 +52,23 @@ public class InventoryItemCursorAdapter extends CursorAdapter {
      *                correct row.
      */
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
+    public void bindView(final View view, Context context, Cursor cursor) {
         // Find individual views that we want to modify in the list item layout.
-        TextView nameTextView = (TextView) view.findViewById(R.id.item_name);
-        TextView priceTextView = (TextView) view.findViewById(R.id.item_price);
-        TextView quantityTextView = (TextView) view.findViewById(R.id.item_quantity);
+        final TextView nameTextView = (TextView) view.findViewById(R.id.item_name);
+        final TextView priceTextView = (TextView) view.findViewById(R.id.item_price);
+        final TextView quantityTextView = (TextView) view.findViewById(R.id.item_quantity);
         Button sellButton = (Button) view.findViewById(R.id.item_sell);
         sellButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String quantityString = quantityTextView.getText().toString();
+                quantityString = quantityString.replace(STOCK_TEXT, "");
+                int quantity = Integer.parseInt(quantityString);
+                if (quantity > 0) {
+                    quantity -= 1;
+                }
+                quantityString = STOCK_TEXT + Integer.toString(quantity);
+                quantityTextView.setText(quantityString);
             }
         });
 
@@ -73,9 +83,9 @@ public class InventoryItemCursorAdapter extends CursorAdapter {
         // Read the item attributes from the Cursor for the current item.
         String itemName = "<" + cursor.getString(nameColumnIndex) + ">";
         Float itemPriceFloat = cursor.getFloat(priceColumnIndex);
-        String itemPrice = "Price: $" + itemPriceFloat.toString();
+        String itemPrice = PRICE_TEXT + itemPriceFloat.toString();
         Integer itemQuantityInteger = cursor.getInt(quantityColumnIndex);
-        String itemQuantity = "Stock: " + itemQuantityInteger.toString();
+        String itemQuantity = STOCK_TEXT + itemQuantityInteger.toString();
 
         // Update the TextViews with the attributes for the current item.
         nameTextView.setText(itemName);

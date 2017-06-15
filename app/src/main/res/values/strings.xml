@@ -1,4 +1,6 @@
 <resources>
+    <string name="adapter_price">Price: $</string>
+    <string name="adapter_stock">Stock: </string>
     <string name="app_name">InventoryApp</string>
     <string name="action_insert_dummy_data">Insert Dummy Data</string>
     <string name="action_delete_all_entries">Delete All Items</string>
