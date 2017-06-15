@@ -240,7 +240,12 @@ public class EditorActivity extends AppCompatActivity implements
         String quantityString = mQuantityTextView.getText().toString().trim();
         String infoString = mInfoEditText.getText().toString().trim();
         String emailString = mEmailEditText.getText().toString().trim();
-        String imageString = mImageUri.toString().trim();
+
+        // Check if a picture is picked.
+        String imageString = "";
+        if (mImageUri != null) {
+            imageString = mImageUri.toString().trim();
+        }
 
         // Check if this is supposed to be a new item
         // and check if all the fields in the editor are blank.
@@ -319,6 +324,7 @@ public class EditorActivity extends AppCompatActivity implements
         values.put(InventoryItemEntry.COLUMN_ITEM_INFO, infoString);
         values.put(InventoryItemEntry.COLUMN_ITEM_EMAIL, emailString);
         values.put(InventoryItemEntry.COLUMN_ITEM_PICTURE, imageString);
+        Log.i(LOG_TAG, "Saving Image URI String: " + imageString);
 
         // Determine adding new item or update existing item.
         if (mCurrentItemUri == null) {
@@ -385,13 +391,13 @@ public class EditorActivity extends AppCompatActivity implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        // Bail early if the cursor is null or there is less than 1 row in the cursor.
+        // Fail early if the cursor is null or there is less than 1 row in the cursor.
         if (cursor == null || cursor.getCount() < 1) {
             return;
         }
 
         // Proceed with moving to the first row of the cursor and reading data from it.
-        // This should be the only row in the cursor.
+        // There should be the only row in the cursor.
         if (cursor.moveToFirst()) {
             // Find the columns of item attributes that we're interested in.
             int nameColumnIndex = cursor.getColumnIndex(
@@ -423,8 +429,11 @@ public class EditorActivity extends AppCompatActivity implements
             mEmailEditText.setText(email);
 
             if (!TextUtils.isEmpty(imageString)) {
+                Log.i(LOG_TAG, "Setting image URI from String: " + imageString);
                 mImageUri = Uri.parse(imageString);
-                mImageView.setImageBitmap(getBitmapFromUri(mImageUri));
+                if (mImageUri != null) {
+                    mImageView.setImageBitmap(getBitmapFromUri(mImageUri));
+                }
             }
         }
     }
@@ -432,7 +441,7 @@ public class EditorActivity extends AppCompatActivity implements
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         // If the loader is invalidated, clear out all the data from the input fields.
-        mImageView.setImageURI(null);
+        mImageView.setImageBitmap(getBitmapFromUri(null));
         mNameEditText.setText("");
         mPriceEditText.setText("");
         mQuantityTextView.setText("");
@@ -551,6 +560,10 @@ public class EditorActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Get Bitmap from image content URI.
+     * Reference: http://github.com/crlsndrsjmnz/MyShareImageExample
+     */
     public Bitmap getBitmapFromUri(Uri uri) {
         if (uri == null || uri.toString().isEmpty())
             return null;
@@ -580,7 +593,7 @@ public class EditorActivity extends AppCompatActivity implements
             return bitmap;
 
         } catch (FileNotFoundException fne) {
-            Log.e(LOG_TAG, "Failed to load image.", fne);
+            Log.e(LOG_TAG, "Failed to load image, file not found.", fne);
             return null;
         } catch (Exception e) {
             Log.e(LOG_TAG, "Failed to load image.", e);
@@ -589,7 +602,8 @@ public class EditorActivity extends AppCompatActivity implements
             try {
                 input.close();
             } catch (IOException ioe) {
-
+                Log.e(LOG_TAG, "Failed to close input stream.", ioe);
+                return null;
             }
         }
     }
