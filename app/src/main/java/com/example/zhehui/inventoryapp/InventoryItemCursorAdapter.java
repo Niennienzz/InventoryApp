@@ -41,7 +41,7 @@ public class InventoryItemCursorAdapter extends CursorAdapter {
      */
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        // Inflate a list item view using the layout specified in list_item.xml
+        // Inflate a list item view using the layout specified in list_item.xml file.
         return LayoutInflater.from(context).inflate(R.layout.list_item, parent, false);
     }
 
@@ -80,6 +80,7 @@ public class InventoryItemCursorAdapter extends CursorAdapter {
                 quantityTextView.setText(quantityString);
 
                 // Update database.
+                // This part is really dirty...
                 InventoryItemDbHelper dbHelper = new InventoryItemDbHelper(context);
                 SQLiteDatabase db = dbHelper.getReadableDatabase();
                 String name = nameTextView.getText().toString();

@@ -124,7 +124,7 @@ public class EditorActivity extends AppCompatActivity implements
         // If the intent DOES NOT contain a item content URI,
         // then we know that we are creating a new item.
         if (mCurrentItemUri == null) {
-            // This is a new item, so change the app bar to say "Add a Item"
+            // This is a new item, so change the app bar to say "Add a Item".
             setTitle(getString(R.string.editor_activity_title_new_item));
 
             // Invalidate the options menu, so the "Delete" menu option can be hidden.
@@ -172,7 +172,7 @@ public class EditorActivity extends AppCompatActivity implements
             }
         });
 
-        // Setup the button listener for pick picture button
+        // Setup the button listener for pick picture button.
         Button buttonPickPic = (Button) findViewById(R.id.editor_pick_picture);
         buttonPickPic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -371,7 +371,9 @@ public class EditorActivity extends AppCompatActivity implements
         finish();
     }
 
-    // Satisfy the Cursor Loader interface.
+    /**
+     * Satisfy the Cursor Loader interface.
+     */
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         // Since the editor shows all item attributes, define a projection that contains
@@ -505,7 +507,7 @@ public class EditorActivity extends AppCompatActivity implements
                             }
                         };
 
-                // Show a dialog that notifies the user they have unsaved changes
+                // Show a dialog that notifies the user they have unsaved changes.
                 showUnsavedChangesDialog(discardButtonClickListener);
                 return true;
         }
